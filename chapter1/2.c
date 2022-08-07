@@ -4,9 +4,9 @@
 
 #define IS_SAMPLE_COORD(C1,C2) (C1.x == C2.x) && (C1.y == C2.y)? 1: 0
 #define WORDLENS 10
-#define LISTLENS 4
+#define LISTLENS 5
 #define W 4
-#define H 4
+#define H 5
 
 
 typedef struct
@@ -35,18 +35,20 @@ typedef struct
 
 typedef enum direction {r, d, rd, ru} Direction;
 
-static const char WordMatrix[4][4] = {
+static const char WordMatrix[H][W] = {
     {'t', 'h', 'i', 's'},
     {'w', 'a', 't', 's'},
     {'o', 'a', 'h', 'g'},
-    {'f', 'g', 'd', 't'}
+    {'f', 'g', 'd', 't'},
+    {'a', 'b', 'c', 'd'},
 };
 
 static const Word WordList[LISTLENS] = {
     {"this"},
     {"two"},
     {"fat"},
-    {"that"}
+    {"that"},
+    {"at"}
 };
 
 static int len_str(char * ps);
@@ -108,12 +110,6 @@ int main(void)
 }
 
 
-// bool is_same_coord(Coord c1, Coord c2)
-// {
-//     return (c1.x == c2.x) && (c1.y == c2.y) ? true: false;
-// }
-
-
 static void find_word(CoordSet * pcoord_set, Direction dircetion)
 {
     Result result;
@@ -129,6 +125,7 @@ static void find_word(CoordSet * pcoord_set, Direction dircetion)
             dircetion,
             &result
         );
+        // printf("%s\n", result.word.str);
         if (is_str_contain_word(result.word.str, tmp_str))
         {
             printf("Fined word %s\n", tmp_str);
@@ -146,21 +143,23 @@ static void find_word(CoordSet * pcoord_set, Direction dircetion)
 
 static bool is_str_contain_word(char * pstr, char * pret_str)
 {
-    int len = len_str(pstr);
     char tmp_word[WORDLENS];
-    for (int i=0; i<len; i++)
+    char * find_char;
+    char word[WORDLENS];
+
+    for (int i=0; i<LISTLENS; i++)
     {
-        strncpy(tmp_word, pstr, i+1);
-        for (int m=0; m<LISTLENS; m++)
+        strcpy(word, WordList[i].str);
+        find_char = strchr(pstr, word[0]);
+        if (find_char == NULL)
+            continue;
+        if (strncmp(find_char, word, len_str(word))==0)
         {
-            if (strcmp(tmp_word, WordList[m].str) == 0)
-            {
-                strcpy(pret_str, tmp_word);
-                return true;
-            }
+            strcpy(pret_str, word);
+            return true;
         }
     }
-    
+
     return false;
 }
 
@@ -291,12 +290,12 @@ static void can_rd_direction_coord(CoordSet * p_coord_set, int h, int w)
         p_coord_set->list[p_coord_set->count].x = i;
         p_coord_set->list[p_coord_set->count].y = 0;
         p_coord_set->count++;
-        if (0 != i)
-        {
-            p_coord_set->list[p_coord_set->count].x = 0;
-            p_coord_set->list[p_coord_set->count].y = i;
-            p_coord_set->count++;
-        }
+    }
+    for (int i=1; i<h; i++)
+    {
+        p_coord_set->list[p_coord_set->count].x = 0;
+        p_coord_set->list[p_coord_set->count].y = i;
+        p_coord_set->count++;
     }
 }
 
