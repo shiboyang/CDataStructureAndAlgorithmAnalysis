@@ -1,0 +1,9 @@
+//
+// Created by shiby on 22-8-27.
+//
+
+#ifndef DATASTRUCTURE_PARENTHESIS_MATCHING_H
+#define DATASTRUCTURE_PARENTHESIS_MATCHING_H
+void parenthesis_match(char []);
+
+#endif //DATASTRUCTURE_PARENTHESIS_MATCHING_H
