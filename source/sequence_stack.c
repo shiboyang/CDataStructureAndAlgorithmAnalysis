@@ -2,7 +2,7 @@
 // Created by shiby on 22-8-27.
 //
 
-#include "sequence_stack.h"
+#include "include/sequence_stack.h"
 #include <stdio.h>
 
 

@@ -14,4 +14,4 @@ add_executable(CDataStructureAndAlgorithmAnalysis
         chapter2/main.c
         ../source
         ../utils/common.c
-        ../utils/common.h ../source/list.c ../source/list.h ../source/sequence_stack.c ../source/sequence_stack.h ../DataSrtucture/chapter2/parenthesis_matching.c ../DataSrtucture/chapter2/main.c)
+        ../utils/common.h ../source/list.c ../source/include/list.h ../source/sequence_stack.c ../source/include/sequence_stack.h ../DataSrtucture/chapter2/parenthesis_matching.c ../DataSrtucture/chapter2/main.c)
