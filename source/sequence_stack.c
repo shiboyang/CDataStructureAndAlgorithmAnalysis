@@ -18,7 +18,7 @@ int empty(STACK * pst)
 
 datatype read(STACK * pst)
 {
-    return pst->data[pst->top];
+    return pst->data[pst->top-1];
 }
 
 void push(STACK * pst, datatype data)
