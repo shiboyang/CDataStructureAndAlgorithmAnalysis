@@ -9,7 +9,7 @@ add_executable(Main main.c parenthesis_matching.c)
 add_executable(Main2 expression_evaluation.c)
 
 target_link_libraries(Main mylibs)
-target_link_libraries(Main2 mylibs)
+target_link_libraries(Main2 mylibs m)
 
 target_include_directories(Main
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

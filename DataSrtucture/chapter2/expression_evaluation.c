@@ -4,19 +4,98 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
 #include "expression_evaluation.h"
 #include "sequence_stack.h"
 
 #define IS_NUMBER(x) '0'<=(x) && (x)<='9'
 #define IS_SPOT(x) (x) == '.'
+#define IS_SPACE(x) (x) == ' '
 
 static void infix_to_postfix(char [], char []);
-
 static bool is_operation(char);
-
 static float evaluate_postfix_expression(char []);
-
 static int priority(char);
+static double string_to_number(char []);
+static double evaluate(double num1, double num2, char operator);
+
+static double string_to_number(char str[])
+{
+	double number = 0.0;
+	double i = 1.0;
+	while (*str)
+	{
+		if (IS_NUMBER(*str))
+		{
+			if (i > 0)
+				number = number * 10 + (*str - '0');
+			else
+				number = number + pow(10.0, i--) * (*str - '0');
+		}
+		else if (IS_SPOT(*str))
+			i = -1.0;
+		str++;
+	}
+
+	return number;
+}
+
+double evaluate(double num1, double num2, char operator)
+{
+	switch (operator)
+	{
+	case '+':
+		return num1 + num2;
+	case '-':
+		return num1 - num2;
+	case '*':
+		return num1 * num2;
+	case '/':
+		return num1 / num2;
+	default:
+		printf("invalid operator! %c", operator);
+		exit(-1);
+	}
+}
+
+double evaluate_expression(char str[])
+{
+	char postfix_str[100];
+	char tmp_str[100];
+	int i = 0, m = 0, n = 0;
+	double num_array[100];
+	double num;
+
+	infix_to_postfix(str, postfix_str);
+
+	while (postfix_str[n])
+	{
+		if (IS_NUMBER(postfix_str[n]) || IS_SPOT(postfix_str[n]))
+			tmp_str[i++] = postfix_str[n];
+		else if (IS_SPACE(postfix_str[n]))
+		{
+			if (i == 0) goto end;
+			tmp_str[i] = '\0';
+			num_array[m++] = string_to_number(tmp_str);
+			i = 0;
+		}
+		else if (is_operation(postfix_str[n]))
+		{
+			num = evaluate(num_array[m - 2], num_array[m - 1], postfix_str[n]);
+			num_array[m - 2] = num;
+			num_array[m - 1] = 0;
+			m--;
+		}
+		else
+			continue;
+
+	end: n++;
+	}
+
+	return num_array[0];
+}
 
 static int priority(char c)
 {
@@ -37,21 +116,19 @@ static int priority(char c)
 	}
 }
 
-static float string_to_number(char []);
-
-static float string_to_number(char str[])
+//判断是否操作符
+static bool is_operation(char c)
 {
-
-}
-
-float evaluate_expression(char str[])
-{
-	float result = 0.0f;
-	char postfix_str[100];
-
-	infix_to_postfix(str, postfix_str);
-
-	return result;
+	switch (c)
+	{
+	case '+':
+	case '-':
+	case '*':
+	case '/':
+		return true;
+	default:
+		return false;
+	}
 }
 
 //后缀表达式转中缀表达式
@@ -105,29 +182,17 @@ static void infix_to_postfix(char str[], char s2[])
 	{
 		tmp_str[i++] = pop(&operator_stack);
 		tmp_str[i++] = ' ';
-
 	}
-	printf("%s", tmp_str);
+	tmp_str[i++] = '\0';
+	printf("%s\n", tmp_str);
+	strcpy(s2, tmp_str);
 }
 
-//判断是否操作符
-static bool is_operation(char c)
+int main(void)
 {
-	switch (c)
-	{
-	case '+':
-	case '-':
-	case '*':
-	case '/':
-		return true;
-	default:
-		return false;
-	}
-}
-
-
-int main(void) {
-	char str[100] = "0.3/(5*2+1)#";
-	evaluate_expression(str);
+//	char str[100] = "0.3/(5*2+1)#";
+	char str[100] = "1*20*(2-19/(2+3))#";
+	double num = evaluate_expression(str);
+	printf("Result: %lf\n", num);
 	return 0;
 }
