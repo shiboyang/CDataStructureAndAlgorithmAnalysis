@@ -16,11 +16,15 @@
 
 static void infix_to_postfix(char [], char []);
 static bool is_operation(char);
-static float evaluate_postfix_expression(char []);
 static int priority(char);
 static double string_to_number(char []);
 static double evaluate(double num1, double num2, char operator);
 
+/*!
+ * 字符到数字
+ * @param str
+ * @return
+ */
 static double string_to_number(char str[])
 {
 	double number = 0.0;
@@ -42,6 +46,13 @@ static double string_to_number(char str[])
 	return number;
 }
 
+/*!
+ * 求解数值表达式
+ * @param num1
+ * @param num2
+ * @param operator
+ * @return
+ */
 double evaluate(double num1, double num2, char operator)
 {
 	switch (operator)
@@ -60,6 +71,11 @@ double evaluate(double num1, double num2, char operator)
 	}
 }
 
+/*!
+ * 求解字符计算表达式
+ * @param str
+ * @return
+ */
 double evaluate_expression(char str[])
 {
 	char postfix_str[100];
@@ -91,12 +107,18 @@ double evaluate_expression(char str[])
 		else
 			continue;
 
-	end: n++;
+	end:
+		n++;
 	}
 
 	return num_array[0];
 }
 
+/*!
+ * 获取计算符号级别
+ * @param c
+ * @return
+ */
 static int priority(char c)
 {
 	switch (c)
@@ -116,7 +138,11 @@ static int priority(char c)
 	}
 }
 
-//判断是否操作符
+/*!
+ * 判断是否操作符
+ * @param c
+ * @return
+ */
 static bool is_operation(char c)
 {
 	switch (c)
@@ -131,7 +157,11 @@ static bool is_operation(char c)
 	}
 }
 
-//后缀表达式转中缀表达式
+/*!
+ * 后缀表达式转中缀表达式
+ * @param str
+ * @param s2
+ */
 static void infix_to_postfix(char str[], char s2[])
 {
 	char tmp_str[100];
