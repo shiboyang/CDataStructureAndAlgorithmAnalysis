@@ -25,7 +25,7 @@ void push(STACK * pst, datatype data)
 {
     if (pst->top > MAXSIZE)
     {
-        printf("Stack is full");
+        printf("Stack is queue_full");
         return;
     }
     pst->data[pst->top] = data;

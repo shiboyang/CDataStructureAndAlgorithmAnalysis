@@ -1,5 +1,5 @@
 //
-// Created by liuquan on 22-8-27.
+// Created by shiby on 22-8-27.
 //
 
 #ifndef DATASTRUCTURE_SEQUENCE_STACK_H

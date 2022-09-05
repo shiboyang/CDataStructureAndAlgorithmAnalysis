@@ -4,13 +4,10 @@ project(main VERSION 1.0)
 
 add_subdirectory("../../source" "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-add_executable(Main main.c parenthesis_matching.c)
-
 add_executable(Main2 expression_evaluation.c)
 
-target_link_libraries(Main mylibs)
-target_link_libraries(Main2 mylibs m)
+add_executable(QueueMain queue_practice.c)
 
-target_include_directories(Main
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-        )
+target_link_libraries(Main2 mylibs m)
+target_link_libraries(QueueMain mylibs m)
+
