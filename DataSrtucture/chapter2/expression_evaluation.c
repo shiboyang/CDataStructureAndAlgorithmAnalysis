@@ -7,7 +7,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-#include "expression_evaluation.h"
 #include "sequence_stack.h"
 
 #define IS_NUMBER(x) '0'<=(x) && (x)<='9'

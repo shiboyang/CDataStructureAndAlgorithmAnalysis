@@ -8,6 +8,8 @@ add_executable(Main2 expression_evaluation.c)
 
 add_executable(QueueMain queue_practice.c)
 
+add_executable(Main test.c)
+
 target_link_libraries(Main2 mylibs m)
 target_link_libraries(QueueMain mylibs m)
 

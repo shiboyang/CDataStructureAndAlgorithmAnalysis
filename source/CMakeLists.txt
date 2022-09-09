@@ -1,7 +1,7 @@
 add_library(mylibs STATIC
         sequence_stack.c
         sequence_queue.c
-        )
+        link_list.c include/link_list.h)
 
 
 target_include_directories(
