@@ -9,6 +9,7 @@ int main() {
     for (int i = 0; i < 10; ++i) {
         list.append(i);
     }
+    list.insert(100, 3);
     list.display();
     return 0;
 }

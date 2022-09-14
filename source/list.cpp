@@ -23,7 +23,7 @@ Node *List::find(int position) {
     Node *pnode = NULL;
     if (position <= List::length) {
         pnode = List::head;
-        for (int i = 0; i < List::length; ++i) {
+        for (int i = 0; i < position-1; ++i) {
             pnode = pnode->next;
         }
     } else {
@@ -44,6 +44,7 @@ void List::insert(datatype d, int position) {
     if (fined_node) {
         Node * pnode = new Node(d, fined_node->next);
         fined_node->next = pnode;
+        List::length++;
     }
 }
 
