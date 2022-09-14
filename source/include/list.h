@@ -1,43 +1,40 @@
 //
-// Created by shiby on 22-8-11.
+// Created by shiby on 22-9-14.
 //
 
-#ifndef CDATASTRUCTUREANDALGORITHMANALYSIS_LIST_H
-#define CDATASTRUCTUREANDALGORITHMANALYSIS_LIST_H
+#ifndef MAIN_LIST_H
+#define MAIN_LIST_H
 
-struct Node;
-//struct element;
-typedef int ElementType;
-struct list;
+#include <iostream>
 
-typedef struct Node *PtrToNode;
-typedef struct list *  List;
-typedef PtrToNode Position;
+using namespace std;
+#define datatype int
 
-List init_list(List l);
+class Node {
+public:
+    datatype data;
+    Node *next;
 
-List clean(List l);
+    explicit Node(int d = 0, Node *pn = nullptr);
+};
 
-int is_empty(List l);
+class List {
+private:
+    Node *head;
+    int length;
+public:
+    List();
 
-int is_last(Position p);
+    int count();
 
-Position find(List l, ElementType element);
+    void insert(int d, int position);
 
-void delete(ElementType element, List l);
+    void append(int d);
 
-Position find_previous(List l, ElementType element);
+    Node *find(int position);
 
-void insert(List l, ElementType element);
-
-void delete_list(List l);
-
-Position header(List l);
-
-Position first(List l);
-
-Position advance(Position p);
+    void display();
+};
 
 
-#endif //CDATASTRUCTUREANDALGORITHMANALYSIS_LIST_H
-
+#endif //MAIN_LIST_H

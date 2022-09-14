@@ -10,6 +10,9 @@ add_executable(QueueMain queue_practice.c)
 
 add_executable(Main test.c)
 
+add_executable(ListMain test_list.cpp)
+
 target_link_libraries(Main2 mylibs m)
 target_link_libraries(QueueMain mylibs m)
+target_link_libraries(ListMain mylibs m)
 
