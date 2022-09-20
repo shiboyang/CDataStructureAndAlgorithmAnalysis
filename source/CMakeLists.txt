@@ -3,6 +3,7 @@ add_library(mylibs STATIC
         sequence_queue.c
         link_list.c
         list.cpp
+        matrix.cpp
         )
 
 
