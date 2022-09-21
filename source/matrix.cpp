@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Matrix::Matrix(int r, int c, const int* d = nullptr)
+Matrix::Matrix(int r, int c, const int* d)
 		:rows(r), columns(c)
 {
 	data = new int[r*c];

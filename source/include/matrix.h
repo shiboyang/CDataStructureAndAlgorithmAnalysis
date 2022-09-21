@@ -14,8 +14,8 @@ private:
 	int columns;
 
 public:
-	Matrix(int r, int c, const int* d);
-	~Matrix();
+    Matrix(int r, int c, const int* d = nullptr);
+    ~Matrix();
 	Matrix(const Matrix& other);
 
 	friend ostream& operator<<(ostream& os, const Matrix& m);
