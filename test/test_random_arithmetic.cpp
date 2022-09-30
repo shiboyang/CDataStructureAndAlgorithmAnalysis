@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <iomanip>
+#include <cstdio>
 
 using namespace std;
 
@@ -94,7 +95,7 @@ typedef struct expression {
 Expression random_expression(int maxNum, examRank rank) {
     const char sign_list[4] = {'+', '-', '*', '\\'};
     int num1 = random_number(0, maxNum);
-    int num2 = random_number(0, maxNum);
+    int num2 = random_number(0, maxNum - num1);
     char sign = sign_list[random_number(0, (rank == easy ? 2 : 4))];
     elementType result;
     switch (sign) {
@@ -200,6 +201,34 @@ float find_average(const float *list, int length) {
     return total / float(length);
 }
 
+
+void clear_cin() {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+
+double getDouble(const string &tip = "") {
+    string line;
+    double result;
+    char trash;
+    while (true) {
+        if (getline(cin, line)) {
+            istringstream iss(line);
+            iss >> result;
+            if (!iss.fail() && (iss >> trash).fail())
+                return result;
+            if (!tip.empty()) {
+                cout << tip;
+                cout.flush();
+            }
+            //iss.clear();
+            //iss.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+}
+
+
 int main() {
     srand((unsigned int) time(nullptr));
 
@@ -212,6 +241,7 @@ int main() {
     clean_stdin();
     cout << "请输入题目难度0-easy, 1-hard: ";
     cin >> exam_rank;
+    clear_cin();
 
     elementType result_list[count_expression];
     Expression expression_list[count_expression];
@@ -225,20 +255,23 @@ int main() {
         expression_list[i] = random_expression(100, exam.rank);
     }
 
+    istringstream iss;
 
     for (int i = 0; i < count_expression; ++i) {
         cout << expression_list[i].str;
         t1 = get_ctime();
-        while (true) {
-            cin >> result_list[i];
-            if (!cin.fail() && cin.get() == '\n')
-                break;
-            clean_stdin(); // failed buffer[-1]
-            cin.clear();
-            cin.sync();
-            cout << "Invalid input." << endl;
-            cout << expression_list[i].str;
-        }
+
+//        while (true) {
+//            iss >> result_list[i];
+//            if (!cin.fail() && cin.get() == '\n')
+//                break;
+//            clean_stdin(); // failed buffer[-1]
+//            cin.clear();
+//            cin.sync();
+//            cout << "Invalid input." << endl;
+//            cout << expression_list[i].str;
+//        }
+        result_list[i] = getDouble("Invalid input.\n" + expression_list[i].str);
         use_time_list[i] = float(get_ctime() - t1);
     }
     print_examination(exam);
