@@ -3,15 +3,13 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
+
+char is()
+{
+    return (char)1;
+}
 
 int main(void) {
-
-//    int *pi = (int[]) {1, 2, 3, 4, 5};
-    int *p = (int *) malloc(sizeof(int));
-    free(p);
-    p = NULL;
-    free(p);
-
+    printf("%d", is());
     return 0;
 }

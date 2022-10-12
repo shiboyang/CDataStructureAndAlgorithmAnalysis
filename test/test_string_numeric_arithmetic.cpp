@@ -6,30 +6,75 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <cstring>
+#include <algorithm>
 
 
 using namespace std;
 
 
-vector<char> string2vector(const string &s);
+vector<int> string2vector(const string &s, int base);
 
-void print_vector(vector<char> &v);
+vector<char> operate_vector(vector<int> &v1, vector<int> &v2, int base, char sign);
 
-vector<char> add_vector(vector<char> &v1, vector<char> &v2);
+int calculate(int n1, int n2, char sign);
 
-void print_result(vector<int> &result);
+void print_vector(vector<int> &v) {
+    for (auto i: v) {
+        cout << i << endl;
+    }
+}
+
+void print_result(vector<char> &result) {
+    for (size_t i = result.size(); i > 0; --i) {
+        cout << result[i - 1];
+    }
+}
 
 
-bool is_digit(char ch)
-{
-    const
+char number_to_char(int num) {
+    if (num <= 9)
+        return char('0' + num);
+    else if (num <= 36)
+        return char('a' + num - 10);
+    else {
+        cout << "Conversion Failed" << endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+/*!
+ * Convert a character to number greater than 0
+ * Conversion failure return -1
+ */
+int to_digit(char ch) {
+    if (ch >= '0' && ch <= '9') {
+        return ch - '0';
+    } else if (ch >= 'a' && ch <= 'z') {
+        return ch - 'a' + 10;
+    } else if (ch >= 'A' && ch <= 'Z') {
+        return ch - 'A' + 10;
+    } else
+        return -1;
+}
+
+bool have_operator(const string &str) {
+    switch (str[0]) {
+        case '-':
+        case '+':
+            return true;
+        default: {
+            return false;
+        }
+    }
 }
 
 int main() {
     string filename = "/home/sparkai/work/DataStructure/test/InputInteger.txt";
-    vector<char> num_list1, num_list2, result_list;
+    vector<int> num_list1, num_list2;
+    vector<char> result_list;
     string str;
+    int base = 10;
+    char sign1 = '+', sign2 = '+', sign;
     ifstream ifs(filename, ios::in);
 
     if (!ifs.is_open()) {
@@ -38,74 +83,82 @@ int main() {
     }
 
     getline(ifs, str);
-    num_list1 = string2vector(str);
+    if (have_operator(str)) {
+        sign1 = str[0];
+        str[0] = '0';
+    }
+    num_list1 = string2vector(str, base);
+
 
     getline(ifs, str);
-    num_list2 = string2vector(str);
-
-    print_vector(num_list1);
-    print_vector(num_list2);
-
-//    result_list = add_vector(num_list1, num_list2);
-//    print_result(result_list);
-
+    if (have_operator(str)) {
+        sign2 = str[0];
+        str[0] = '0';
+    }
+    num_list2 = string2vector(str, base);
+    sign = (sign1 == sign2 ? '+' : '-');
+    result_list = operate_vector(num_list1, num_list2, base, sign);
+    print_result(result_list);
 
     return 0;
 }
 
-vector<char> string2vector(const string &s, int base) {
-    vector<char> v;
+vector<int> string2vector(const string &s, int base) {
+    vector<int> v;
     char ch;
+    int num = 0;
     istringstream iss(s);
-    for(auto x: s){
-
-    }
 
     while (iss.get(ch)) {
-        if (!isdigit(ch)) {
-            cout << "Invalid " << ch << "to convert to integer";
+        num = to_digit(ch);
+        if (num == -1 || num > base) {
+            cout << "Conversion failed: " << ch << " to number";
             exit(EXIT_FAILURE);
         }
-        v.push_back(ch);
+        v.push_back(num);
     }
     return std::move(v);
 }
 
-void print_vector(vector<char> &v) {
-    for (auto i: v) {
-        cout << i << endl;
+int calculate(int n1, int n2, char sign) {
+    switch (sign) {
+        case '-':
+            return n1 - n2;
+        case '+':
+            return n1 + n2;
+        default: {
+            cout << "Unsupported operator" << sign << endl;
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
-vector<char> add_vector(vector<char> &v1, vector<char> &v2, int base) {
+
+vector<char> operate_vector(vector<int> &v1, vector<int> &v2, int base, char sign = '+') {
     vector<char> result_list;
     int b = 0;
-    char ch;
     istringstream iss;
     while (true) {
-        ch = v1.empty() ? '0' : v1.back();
-        iss.str(ch);
-        auto num1 = v1.empty() ? '0' : v1.back();
-        auto num2 = v2.empty() ? '0' : v2.back();
-        int sum = num1 + num2 + b;
-        if (sum > 1000) {
-            result_list.push_back(sum - 1000);
+        auto num1 = v1.empty() ? 0 : v1.back();
+        auto num2 = v2.empty() ? 0 : v2.back();
+        int sum = calculate(num1, num2, sign) + b;
+
+        if (sum > base) {
+            result_list.push_back(number_to_char(sum - base));
             b = 1;
         } else {
-            result_list.push_back(sum);
-            b = 0;
+            if (sum < 0) {
+                sum += base;
+                b = -1;
+            } else
+                b = 0;
+            result_list.push_back(number_to_char(sum));
         }
         if (!v1.empty()) v1.pop_back();
         if (!v2.empty()) v2.pop_back();
         if (v1.empty() && v2.empty()) break;
     }
+    if (b == -1) result_list.push_back('-');
     return std::move(result_list);
 }
 
-void print_result(vector<int> &result) {
-    for (size_t i = result.size(); i > 0; --i) {
-        cout.fill('0');
-        cout.width(3);
-        cout << result[i - 1] << ",";
-    }
-}

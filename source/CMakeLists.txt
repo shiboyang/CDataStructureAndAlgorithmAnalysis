@@ -4,7 +4,7 @@ add_library(mylibs STATIC
         link_list.c
         list.cpp
         matrix.cpp
-        ../projects/Project2/main.cpp)
+        ../shenlan/Project2/main.cpp ../shenlan/Project2/lib/lib.cpp ../shenlan/Project2/lib/lib.h)
 
 
 target_include_directories(
