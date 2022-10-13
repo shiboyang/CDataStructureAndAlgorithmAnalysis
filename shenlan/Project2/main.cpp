@@ -6,8 +6,8 @@
 
 int main() {
     string filename = "../InputFile.txt";
-    int input_base = 10;
-    int output_base = 3;
+    int input_base = 16;
+    int output_base = 10;
     vector<int> num_list1, num_list2;
     vector<int> result_list;
     string tmp_str;
@@ -38,9 +38,9 @@ int main() {
 
     auto sign = (num_list1.size() >= num_list2.size()) ? sign1 : sign2;
     auto ope = (sign1 == sign2 ? '+' : '-');
-    result_list = operate_vector(num_list1, num_list2, ope);
+    result_list = operate_vector(num_list1, num_list2, input_base, ope);
 
-    print_vector(result_list, sign, output_base);
+    print_vector(result_list, sign, output_base, input_base);
 
     return 0;
 }

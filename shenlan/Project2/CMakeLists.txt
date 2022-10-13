@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(lib)
 
 
-add_executable(Pro2 main.cpp)
+add_executable(Pro2 main.cpp ../Project3/main.cpp)
 
 target_link_libraries(Pro2 PRIVATE
         libs

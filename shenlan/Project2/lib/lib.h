@@ -14,7 +14,8 @@
 using namespace std;
 
 
-vector<int> operate_vector(vector<int> &v1, vector<int> &v2, char sign);
+vector<int> operate_vector(vector<int> &v1, vector<int> &v2, int base, char sign = '+');
+
 
 int calculate(int n1, int n2, char sign);
 
@@ -22,7 +23,7 @@ int to_digit(char ch);
 
 char number_to_char(int num);
 
-void print_vector(vector<int> &v, char sign, int output_base);
+void print_vector(vector<int> &v, char sign, int output_base, int input_base);
 
 bool verify_input_line(string_view sv, int base);
 

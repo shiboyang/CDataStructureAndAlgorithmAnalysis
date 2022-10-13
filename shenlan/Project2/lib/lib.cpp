@@ -11,13 +11,13 @@ bool all_zero(vector<int> &v) {
     return ptr == v.end();
 }
 
-void print_vector(vector<int> &v, char sign, int output_base) {
+void print_vector(vector<int> &v, char sign, int output_base, int input_base) {
     int residue = 0;
     vector<int> num_list(v.rbegin(), v.rend());
     vector<char> ret_v;
     while (!all_zero(num_list)) {
         for (int &num: num_list) {
-            num += residue * 10;
+            num += residue * input_base;
             residue = num % output_base;
             num /= output_base;
         }
@@ -62,9 +62,8 @@ int calculate(int n1, int n2, char sign) {
     return (sign == '-') ? n1 - n2 : n1 + n2;
 }
 
-vector<int> operate_vector(vector<int> &v1, vector<int> &v2, char sign = '+') {
+vector<int> operate_vector(vector<int> &v1, vector<int> &v2, int base, char sign) {
     vector<int> result_list;
-    const int base = 10;
     istringstream iss;
     int b = 0;
     while (true) {
