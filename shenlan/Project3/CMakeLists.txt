@@ -8,7 +8,7 @@ add_subdirectory(lib)
 
 add_executable(encrypt encrypt.cpp)
 add_executable(decrypt decrypt.cpp)
-add_executable(generateCodebook GenerateCodebook.cpp)
+add_executable(generateCodebook generateCodebook.cpp)
 
 target_include_directories(encrypt PRIVATE lib)
 target_include_directories(decrypt PRIVATE lib)

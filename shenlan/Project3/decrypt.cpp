@@ -9,27 +9,27 @@ int main(int argc, char **argv) {
         std::cout << "Argument error\n" << "Usage: " << __func__ << " Codebook, EncryptFile, DecryptFile";
         exit(EXIT_FAILURE);
     }
-    string codebook_path = argv[1];
-    std::ifstream cb_ifs(codebook_path);
-    if (!cb_ifs.is_open()) {
-        std::cout << "Cannot open file" << codebook_path << std::endl;
-        exit(EXIT_FAILURE);
-    }
 
-    string input_path = argv[2];
-    std::ifstream ifs(input_path, std::ios::binary);
-    if (!ifs.is_open()) {
-        std::cout << "error" << std::endl;
-    }
+    string codeBook = argv[1];
+    string InputFileName = argv[2];
+    string OutputFileName = argv[3];
 
-    string output_path = argv[3];
-    std::ofstream ofs(output_path, std::ios::binary);
+    std::ifstream cb_ifs(codeBook);
+    std::ifstream ifs(InputFileName, std::ios::binary);
+    std::ofstream ofs(OutputFileName, std::ios::binary);
 
     char num;
+    bool use26 = true;
+    char ch;
+    if (cb_ifs.tellg() > 26) use26 = false;
+    cb_ifs.seekg(0);
 
-    while (ifs >> num) {
-        auto ch = decrypt256(num, cb_ifs);
-        ofs.put(ch);
+    while (ifs.read(&num, sizeof num)) {
+        if (use26)
+            ch = decrypt26(num, cb_ifs);
+        else
+            ch = decrypt256(num, cb_ifs);
+        ofs.write(&ch, 1);
     }
 
     return 0;

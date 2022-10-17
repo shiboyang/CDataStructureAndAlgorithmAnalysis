@@ -14,7 +14,10 @@ using std::string;
 
 char encrypt256(unsigned char code, std::ifstream &ifs);
 
-char decrypt256(unsigned char code, std::ifstream &ifs);
+char decrypt256(u_char code, std::ifstream &ifs);
 
+char encrypt26(unsigned char ch, std::ifstream &cb_ifs);
+
+char decrypt26(unsigned char ch, std::ifstream &cb_ifs);
 
 #endif //PROJ3_LIB_H

@@ -16,14 +16,21 @@ int main(int argc, char **argv) {
     string InputFileName = argv[2];
     string OutputFileName = argv[3];
 
-    std::ifstream cb_ifs(codeBook);
+    std::ifstream cb_ifs(codeBook, std::ios::ate);
     std::ifstream ifs(InputFileName, std::ios::binary);
     std::ofstream ofs(OutputFileName, std::ios::binary);
     char code;
+    bool use26 = true;
+    char num;
+    if (cb_ifs.tellg() > 26) use26 = false;
+    cb_ifs.seekg(0);
 
     while (ifs.read(&code, sizeof code)) {
-        auto num = encrypt256(code, cb_ifs);
-        ofs.put(num);
+        if (use26)
+            num = encrypt26(code, cb_ifs);
+        else
+            num = encrypt256(code, cb_ifs);
+        ofs.write(&num, 1);
     }
 
     return 0;
