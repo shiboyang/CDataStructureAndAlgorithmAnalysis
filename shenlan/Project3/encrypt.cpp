@@ -16,16 +16,14 @@ int main(int argc, char **argv) {
     string InputFileName = argv[2];
     string OutputFileName = argv[3];
 
-    std::ifstream cv_ifs(codeBook);
-    std::array<int, 256> codebook_array = read_codebook256(cv_ifs);
-
+    std::ifstream cb_ifs(codeBook);
     std::ifstream ifs(InputFileName, std::ios::binary);
-    std::ofstream ofs(OutputFileName, std::ios_base::binary);
-    unsigned char code;
+    std::ofstream ofs(OutputFileName, std::ios::binary);
+    char code;
 
-    while (ifs.read(reinterpret_cast<char *>(&code), sizeof code)) {
-        auto num = encrypt(code, codebook_array);
-        ofs.write(reinterpret_cast<char *>(&num), sizeof num);
+    while (ifs.read(&code, sizeof code)) {
+        auto num = encrypt256(code, cb_ifs);
+        ofs.put(num);
     }
 
     return 0;

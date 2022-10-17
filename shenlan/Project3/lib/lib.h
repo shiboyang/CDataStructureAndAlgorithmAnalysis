@@ -12,13 +12,9 @@
 
 using std::string;
 
-std::array<int, 256> read_codebook256(std::ifstream &ifs);
+char encrypt256(unsigned char code, std::ifstream &ifs);
 
-int encrypt(unsigned char code, std::array<int, 256> &codebook_array);
-
-char decrypt(int code, std::array<int, 256> &codebook_array);
-
-int find_code(int num, std::array<int, 256> &codebook_array);
+char decrypt256(unsigned char code, std::ifstream &ifs);
 
 
 #endif //PROJ3_LIB_H

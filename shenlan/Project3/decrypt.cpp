@@ -10,23 +10,25 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
     string codebook_path = argv[1];
-    std::ifstream cb_ofs(codebook_path);
-    if (!cb_ofs.is_open()) {
+    std::ifstream cb_ifs(codebook_path);
+    if (!cb_ifs.is_open()) {
         std::cout << "Cannot open file" << codebook_path << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    string filename = argv[2];
-    std::ifstream ifs(filename, std::ios_base::binary);
+    string input_path = argv[2];
+    std::ifstream ifs(input_path, std::ios::binary);
+    if (!ifs.is_open()) {
+        std::cout << "error" << std::endl;
+    }
 
     string output_path = argv[3];
-    std::ofstream ofs(output_path, std::ios_base::binary);
+    std::ofstream ofs(output_path, std::ios::binary);
 
-    auto codebook_array = read_codebook256(cb_ofs);
-    int num;
+    char num;
 
-    while (ifs.read(reinterpret_cast<char *>(&num), sizeof num)) {
-        auto ch = decrypt(num, codebook_array);
+    while (ifs >> num) {
+        auto ch = decrypt256(num, cb_ifs);
         ofs.put(ch);
     }
 
