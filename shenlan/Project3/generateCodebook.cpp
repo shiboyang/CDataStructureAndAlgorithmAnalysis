@@ -9,9 +9,10 @@
 #include <random>
 #include <algorithm>
 
-int main() {
+int main(int argc, char **argv) {
 
-    std::ofstream ofs("../codebook256.txt");
+    std::string filepath = argv[1];
+    std::ofstream ofs(filepath);
     std::array<int, 256> codebook{};
 
     for (int i = 0; i < 256; ++i) {
