@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     string InputFileName = argv[2];
     string OutputFileName = argv[3];
 
-    std::ifstream cb_ifs(codeBook);
+    std::ifstream cb_ifs(codeBook, std::ios::ate);
     std::ifstream ifs(InputFileName, std::ios::binary);
     std::ofstream ofs(OutputFileName, std::ios::binary);
 
