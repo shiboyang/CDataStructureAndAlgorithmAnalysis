@@ -1,0 +1,1 @@
+add_library(libs STATIC role.cpp room.cpp)
