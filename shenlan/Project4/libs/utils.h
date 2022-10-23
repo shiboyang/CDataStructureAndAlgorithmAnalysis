@@ -5,10 +5,8 @@
 #ifndef PROJECT4_UTILS_H
 #define PROJECT4_UTILS_H
 
+int randint(int start, int end);
 
-class utils {
-
-};
-
+int randint(int value);
 
 #endif //PROJECT4_UTILS_H

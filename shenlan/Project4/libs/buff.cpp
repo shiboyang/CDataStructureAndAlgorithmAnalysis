@@ -3,8 +3,15 @@
 //
 
 #include "buff.h"
+#include "role.h"
 
 
-void GainBuff::operator()(Person &obj) {
+void LossBuff::operator()(Person *user) {
+}
 
+void CureBuff::operator()(Person *user) {
+    if (this->expire > 0) {
+        user->cure(this->hp);
+        --this->expire;
+    }
 }

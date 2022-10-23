@@ -5,23 +5,38 @@
 #ifndef PROJECT4_BUFFER_H
 #define PROJECT4_BUFFER_H
 
-#include "role.h"
 #include <random>
 
+class Person;
 
 class Buff {
+
 public:
-    virtual void operator()(Person &obj) = 0;
+    explicit Buff(int ex = 1) : expire(ex) {};
+
+    virtual void operator()(Person *) = 0;
+
+    virtual ~Buff() = default;
+
+protected:
+    int expire;
 };
 
-class GainBuff : Buff {
-public:
-    void operator()(Person &obj) override;
-};
 
 class LossBuff : Buff {
 public:
-    void operator()(Person &object) override;
+    void operator()(Person *) override;
+};
+
+
+class CureBuff : public Buff {
+public:
+    explicit CureBuff(unsigned int hp, int ex = 1) : Buff(ex), hp(hp) {};
+
+    void operator()(Person *) override;
+
+protected:
+    unsigned int hp = 0;
 };
 
 #endif //PROJECT4_BUFFER_H

@@ -2,46 +2,61 @@
 // Created by shiby on 22-10-20.
 //
 
-#ifndef PROJECT3_ROLE_H
-#define PROJECT3_ROLE_H
+#ifndef PROJECT4_ROLE_H
+#define PROJECT4_ROLE_H
 
 #include <iostream>
+#include <vector>
+
+class Buff;
 
 class LiveObject {
 
 public:
-    LiveObject(int hp, int ack) : hp(hp), atk(ack) {}
+    LiveObject(unsigned int hp, unsigned int atk) : hp(hp), atk(atk) {}
 
-    int hp;
-    int atk;
-
+protected:
+    unsigned int hp;
+    unsigned int atk;
 };
 
 class Person : LiveObject {
 
 public:
-    Person(int hp, int ack, int exp)
+    Person(unsigned int hp, unsigned int ack, unsigned int exp)
             : LiveObject(hp, ack),
-              exp(exp) {
-        max_hp = 100;
-        max_exp = 10;
-    }
+              exp(exp) {}
 
-    int exp;
+    virtual ~Person();
 
-    virtual ~Person() = default;
+    void cure();
+
+    void cure(unsigned int hp);
+
+    void cure(double percent);
+
+    void add_buff(Buff &);
+
 
 protected:
-    int max_hp;
-    int max_exp;
+    unsigned int exp = 0;
+    unsigned int max_hp = 0;
+    unsigned int max_exp = 0;
+    std::vector<Buff *> buff_list;
 };
 
 
-class Pathfinder : public Person {
+class Explorer : public Person {
 
 public:
-    Pathfinder() :
+    Explorer() :
             Person(100, 10, 0) {}
+
+    ~Explorer() override = default;
+
+protected:
+    const unsigned int max_hp = 100;
+    const unsigned int max_exp = 10;
 };
 
 
@@ -49,24 +64,27 @@ class Monster : public LiveObject {
 
 public:
     Monster() :
-            LiveObject(10, 5),
-            max_hp(10),
-            max_atk(5) {};
+            LiveObject(10, 5) {};
+
+    explicit Monster(double addition) :
+            LiveObject(u_int(addition * 10), u_int(addition * 5)) {};
+
+
 protected:
-    const int max_hp;
-    const int max_atk;
+
+    Monster(unsigned int hp, unsigned int atk) : LiveObject(hp, atk) {};
+
+    const unsigned int max_hp = 10;
 };
 
-class Boss : public LiveObject {
+
+class Boss : public Monster {
 
 public:
-    Boss() :
-            LiveObject(40, 15),
-            max_hp(40),
-            max_atk(15) {};
+    Boss() : Monster(40, 15) {};
+
 protected:
-    const int max_hp;
-    const int max_atk;
+    const unsigned int max_hp = 40;
 };
 
-#endif //PROJECT3_ROLE_H
+#endif //PROJECT4_ROLE_H

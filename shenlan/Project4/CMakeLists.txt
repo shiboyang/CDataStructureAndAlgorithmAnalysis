@@ -8,7 +8,7 @@ add_executable(Proj4 main.cpp)
 
 add_subdirectory(libs)
 
-#target_link_libraries(Proj4 PRIVATE libs)
-#
-#target_include_directories(Proj4 PRIVATE libs)
+target_link_libraries(Proj4 PRIVATE libs)
+
+target_include_directories(Proj4 PRIVATE libs)
 
