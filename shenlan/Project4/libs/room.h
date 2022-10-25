@@ -6,6 +6,7 @@
 #define PROJECT4_ROOM_H
 
 #include <memory>
+#include <utility>
 
 class Event;
 
@@ -15,11 +16,25 @@ class Person;
 
 class BaseRoom {
 public:
-    virtual void operator()(Person *) = 0;
+    explicit BaseRoom(std::string name) : name(std::move(name)) {};
 
-    virtual void encounter(Person *) = 0;
+    BaseRoom(Event *enter_event, Buff *enter_buff, Event *encounter_event, std::string name) :
+            enter_event(enter_event),
+            enter_buff(enter_buff),
+            encounter_event(encounter_event),
+            name(std::move(name)) {};
 
-    virtual ~BaseRoom() = default;
+    //enter event
+    virtual void operator()(Person *);
+
+    //encounter event
+    virtual void encounter(Person *);
+
+    virtual ~BaseRoom();
+
+    void settle(Person *);
+
+    const std::string name;
 
 protected:
     Event *enter_event = nullptr;
@@ -30,43 +45,34 @@ protected:
 
 class Campsite : public BaseRoom {
 public:
-    Campsite();
+    explicit Campsite(const std::string &name = "营地房间");
 
-    ~Campsite() override;
-
-    //enter event
-    void operator()(Person *) override;
-
-    //encounter event
-    void encounter(Person *) override;
-
+    Campsite(Event *enter_event, Buff *enter_buff, Event *encounter_event, const std::string &name = "营地房间") :
+            BaseRoom(enter_event, enter_buff, encounter_event, name) {};
 };
 
 class Room : public BaseRoom {
 public:
-    Room();
+    explicit Room(const std::string &name = "普通房间");
 
-    ~Room() override;
-
-    void operator()(Person *) override;
-
-    void encounter(Person *) override;
+    Room(Event *enter_event, Buff *enter_buff, Event *encounter_event, const std::string &name = "普通房间") :
+            BaseRoom(enter_event, enter_buff, encounter_event, name) {};
 };
 
-class Trap : public BaseRoom {
-public:
-    void operator()(Person *) override;
-};
-
-class BoosRoom : public BaseRoom {
-public:
-    void operator()(Person *) override;
-};
-
-class EquipmentRoom : public BaseRoom {
-public:
-    void operator()(Person *) override;
-};
+//class Trap : public BaseRoom {
+//public:
+//    void operator()(Person *) override;
+//};
+//
+//class BoosRoom : public BaseRoom {
+//public:
+//    void operator()(Person *) override;
+//};
+//
+//class EquipmentRoom : public BaseRoom {
+//public:
+//    void operator()(Person *) override;
+//};
 
 
 #endif //PROJECT4_ROOM_H

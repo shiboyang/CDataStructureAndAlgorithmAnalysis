@@ -13,31 +13,32 @@ class Person;
 
 class Monster;
 
+enum EventState {
+    pending,
+    completed
+};
+
 class Event {
 public:
-    virtual void operator()(Person &) = 0;
+    virtual void operator()(Person *) = 0;
 
     virtual ~Event() = default;
+
+    bool have_completed();
+
+
+protected:
+    EventState state = pending;
 };
 
 
 class RestoreHPEvent : public Event {
 public:
-    void operator()(Person &) override;
+    void operator()(Person *) override;
+
+protected:
+    const std::string event_message = "恢复探险者全部生命";
 };
-
-
-//class RandomGenerateMonster : public Event {
-//public:
-//    RandomGenerateMonster();
-//
-//    ~RandomGenerateMonster();
-//
-//    void operator()(Person &) override;
-//
-//protected:
-//    std::vector<Monster> monster_list;
-//};
 
 
 class EncounterEvent : public Event {
@@ -48,10 +49,11 @@ public:
 
     ~EncounterEvent() override;
 
-    void operator()(Person &) override;
+    void operator()(Person *) override;
 
 protected:
     std::vector<Monster *> monster_list;
+    const std::string event_message = "开始战斗";
 };
 
 
