@@ -6,20 +6,28 @@
 #include <algorithm>
 
 
-//void clean_string(const std::string &str) {
-//    std::cout << str << std::endl;
-//}
+class A {
+public:
+    A(int num) {
+        this->m = num;
+    };
+
+    void print_num() const {
+        std::cout << m << std::endl;
+    }
 
 
-
+    int m;
+};
 
 int main() {
-    std::string str = "abcdefg--";
+    A a(100);
+    A *p = &a;
+    A &af = a;
 
-    auto is_lower_letters = [](char a) {
-        return (a >= 'a' && a <= 'z');
-    };
-    auto ret = std::find_if_not(str.begin(), str.end(), is_lower_letters);
-    std::cout << *ret << std::endl;
+    auto b = new decltype()(200);
+    b->m = 999;
+
+    b->print_num();
     return 0;
 }

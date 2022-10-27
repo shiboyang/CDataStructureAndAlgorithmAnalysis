@@ -10,22 +10,33 @@ int main() {
     Explorer user;
     Campsite campsite;
     campsite(&user);
-    campsite.encounter(&user);
 
-//    std::cout << user.is_dead() << std::endl;
+//    std::cout << "\n";
+//    Room room;
+//    room(&user);
+//    room.encounter(&user);
 
-    Room room;
-    room(&user);
-    room.encounter(&user);
-
+    std::cout << "\n";
     Room room2;
     room2(&user);
-    room2.encounter(&user);
+
+    std::cout << "\n";
+    TrapRoom room4;
+    room4(&user);
 
 
+    std::cout << "\n";
     Room room3;
     room3(&user);
-    room3.encounter(&user);
+
+    std::cout << "\n";
+    BoosRoom room5;
+    room5(&user);
+
+
+    std::cout << "\n";
+    EquipmentRoom room6;
+    room6(&user);
 
 
     return 0;

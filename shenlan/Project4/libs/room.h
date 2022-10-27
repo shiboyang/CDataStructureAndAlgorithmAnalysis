@@ -6,7 +6,7 @@
 #define PROJECT4_ROOM_H
 
 #include <memory>
-#include <utility>
+#include <vector>
 
 class Event;
 
@@ -18,61 +18,43 @@ class BaseRoom {
 public:
     explicit BaseRoom(std::string name) : name(std::move(name)) {};
 
-    BaseRoom(Event *enter_event, Buff *enter_buff, Event *encounter_event, std::string name) :
-            enter_event(enter_event),
-            enter_buff(enter_buff),
-            encounter_event(encounter_event),
-            name(std::move(name)) {};
-
-    //enter event
     virtual void operator()(Person *);
-
-    //encounter event
-    virtual void encounter(Person *);
 
     virtual ~BaseRoom();
 
     void settle(Person *);
 
-    const std::string name;
+    std::string get_name();
 
 protected:
-    Event *enter_event = nullptr;
-    Buff *enter_buff = nullptr;
-    Event *encounter_event = nullptr;
-
+    const std::string name;
+    std::vector<Event *> event_list;
 };
 
 class Campsite : public BaseRoom {
 public:
     explicit Campsite(const std::string &name = "营地房间");
-
-    Campsite(Event *enter_event, Buff *enter_buff, Event *encounter_event, const std::string &name = "营地房间") :
-            BaseRoom(enter_event, enter_buff, encounter_event, name) {};
 };
 
 class Room : public BaseRoom {
 public:
     explicit Room(const std::string &name = "普通房间");
-
-    Room(Event *enter_event, Buff *enter_buff, Event *encounter_event, const std::string &name = "普通房间") :
-            BaseRoom(enter_event, enter_buff, encounter_event, name) {};
 };
 
-//class Trap : public BaseRoom {
-//public:
-//    void operator()(Person *) override;
-//};
-//
-//class BoosRoom : public BaseRoom {
-//public:
-//    void operator()(Person *) override;
-//};
-//
-//class EquipmentRoom : public BaseRoom {
-//public:
-//    void operator()(Person *) override;
-//};
+class TrapRoom : public BaseRoom {
+public:
+    explicit TrapRoom(const std::string &name = "陷阱房间");
+};
+
+class BoosRoom : public BaseRoom {
+public:
+    explicit BoosRoom(const std::string &name = "领主房间");
+};
+
+class EquipmentRoom : public BaseRoom {
+public:
+    explicit EquipmentRoom(const std::string &name = "武器房间");
+};
 
 
 #endif //PROJECT4_ROOM_H

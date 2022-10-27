@@ -17,13 +17,15 @@ class Person;
 class Buff {
 
 public:
-    explicit Buff(BuffType type, const int ex = 1) : expire(ex), type(type) {};
+    explicit Buff(BuffType type, const int ex) : expire(ex), type(type) {};
 
     virtual void operator()(Person *) = 0;
 
     virtual ~Buff() = default;
 
-    bool expired() const;
+    [[nodiscard]] bool expired() const;
+
+    [[nodiscard]] bool is_good() const;
 
 protected:
     int expire;
@@ -31,9 +33,9 @@ protected:
 };
 
 
-class LossBuff : Buff {
+class LossHPBuff : public Buff {
 public:
-    LossBuff() : Buff(badBuff) {};
+    explicit LossHPBuff(const int ex = 1) : Buff(badBuff, ex) {};
 
     void operator()(Person *) override;
 

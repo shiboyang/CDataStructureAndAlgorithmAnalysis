@@ -4,4 +4,5 @@ add_library(libs STATIC
         buff.cpp
         event.cpp
         utils.cpp
+        weapon.cpp
         )

@@ -1,44 +1,61 @@
 //
 // Created by shiby on 22-10-21.
 //
-#include <sstream>
 #include "event.h"
 #include "role.h"
 #include "utils.h"
+#include "buff.h"
 
 bool Event::have_completed() {
     return state == completed;
 }
 
-void RestoreHPEvent::operator()(Person *user) {
+void CureEvent::operator()(Person *user) {
     print_event(this->event_message, user->state());
-    user->cure();
+    if (hp > 0)
+        user->cure(hp);
+    else
+        user->cure();
+}
+
+CureEvent::CureEvent(uint hp) : hp(hp) {
+    event_message = "恢复探险者" + std::to_string(hp) + "生命";
 }
 
 
-EncounterEvent::EncounterEvent(int num_monster, double addition, bool random_add) {
+void LossHPEvent::operator()(Person *user) {
+    print_event(event_message, user->state());
+    user->injure(harm);
+}
+
+
+EncounterEvent::EncounterEvent(int num_monster, double addition, bool random_add, bool create_monster) {
+    auto _addition = addition;
     for (int i = 0; i < num_monster; ++i) {
         if (random_add) {
-            addition = (randint(2)) ? (addition + 1) : (1 - addition);
+            _addition = (randint(2)) ? addition : addition * -1;
         }
-        std::ostringstream oss;
-        oss << "怪物" << i;
-        auto monster = new Monster(addition, oss.str());
+        _addition += 1;
+        Monster *monster;
+        if (create_monster)
+            monster = new Monster(_addition, "怪物" + std::to_string(i));
+        else
+            monster = new Boss(_addition, "怪物首领" + std::to_string(i));
+
         this->monster_list.push_back(monster);
     }
 }
 
 
-EncounterEvent::EncounterEvent(int start, int end, double addition, bool random_add) {
+EncounterEvent::EncounterEvent(int start, int end, double addition, bool random_add, bool create_monster) {
     auto num_monster = randint(start, end);
     auto _addition = addition;
     for (int i = 0; i < num_monster; ++i) {
-        std::ostringstream oss;
         if (random_add) {
-            _addition = (randint(2)) ? (addition + 1) : (1 - addition);
+            _addition = (randint(2)) ? addition : addition * -1;
         }
-        oss << "怪物" << i;
-        auto monster = new Monster(_addition, oss.str());
+        _addition += 1;
+        auto monster = new Monster(_addition, "怪物" + std::to_string(i));
         this->monster_list.push_back(monster);
     }
 }
@@ -53,7 +70,7 @@ void EncounterEvent::operator()(Person *user) {
     uint exp = 0;
     auto monster = monster_list.begin();
     while (!user->is_dead() && monster < monster_list.end()) {
-        user->attack(*monster);
+        user->gan(*monster);
         print_attack_message(user, *monster);
 
         if ((*monster)->is_dead()) {
@@ -63,7 +80,7 @@ void EncounterEvent::operator()(Person *user) {
         }
 
         for (auto m = monster; m < monster_list.end(); ++m) {
-            (*m)->attack(user);
+            (*m)->gan(user);
             print_attack_message(*m, user);
         }
     }
@@ -73,7 +90,55 @@ void EncounterEvent::operator()(Person *user) {
             user->add_exp(exp);
             print_add_experience_message(user, exp);
         }
+    } else {
+        print_dead_message(user);
     }
 }
 
+void EncounterEvent::add_monster(Monster *monster) {
+    monster_list.push_back(monster);
+}
 
+
+void ProportionLossHPEvent::operator()(Person *user) {
+    auto hp = user->get_hp();
+    user->injure(uint(hp * proportion));
+    print_event(event_message, user->state());
+}
+
+void CleanBadBuffEvent::operator()(Person *user) {
+    auto buff_ptr = user->buff_list.begin();
+    while (buff_ptr != user->buff_list.end()) {
+        if (!(*buff_ptr)->is_good()) {
+            buff_ptr = user->buff_list.erase(buff_ptr);
+        } else
+            ++buff_ptr;
+    }
+    print_event(event_message);
+}
+
+
+void AddBuffEvent::operator()(Person *user) {
+    user->add_buff(buff);
+    buff = nullptr;
+}
+
+void SnapshotEvent::operator()(Person *user) {
+    hp = user->get_hp();
+}
+
+void RecoverEvent::operator()(Person *user) {
+    if (snapshot->hp > user->get_hp())
+        user->cure(snapshot->hp - user->get_hp());
+    else
+        user->injure(user->get_hp() - snapshot->hp);
+}
+
+void ExperienceEvent::operator()(Person *user) {
+    user->add_exp(exp);
+}
+
+void WearEquipment::operator()(Person *user) {
+    user->wear(weapon);
+    print_wear_weapon_message(user, weapon);
+}

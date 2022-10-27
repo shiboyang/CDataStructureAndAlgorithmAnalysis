@@ -9,16 +9,19 @@ bool Buff::expired() const {
     return expire <= 0;
 }
 
-void LossBuff::operator()(Person *user) {
+bool Buff::is_good() const {
+    return type == goodBuff;
+}
+
+void LossHPBuff::operator()(Person *user) {
     if (expire-- > 0) {
-        std::cout << message << ", " << user->state() << std::endl;
         user->injure(2);
+        std::cout << message << ", " << user->state() << std::endl;
     }
 }
 
 void CureBuff::operator()(Person *user) {
-    if (expire-- > 0)
-    {
+    if (expire-- > 0) {
         user->cure(hp);
         std::cout << message << ", " << user->state() << std::endl;
     }
