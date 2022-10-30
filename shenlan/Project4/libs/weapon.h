@@ -15,20 +15,23 @@ class LiveObject;
 
 class Weapon {
 public:
-    Weapon() : atk(4), durability(6), max_atk(4), max_durability(6) {};
-
-    explicit Weapon(std::string msg) : atk(4), durability(6), max_atk(4), max_durability(6),
-                                       property_message(std::move(msg)) {};
-
-    Weapon(uint atk, uint durability, std::string msg) :
-            atk(atk), durability(durability), max_atk(atk), max_durability(durability),
+    explicit Weapon(std::string name = "武器1", std::string msg = "") :
+            atk(4), durability(6), max_atk(4), max_durability(6), name(std::move(name)),
             property_message(std::move(msg)) {};
+
+    Weapon(uint atk, uint durability, std::string name, std::string msg) :
+            atk(atk),
+            max_atk(atk),
+            durability(durability),
+            max_durability(durability),
+            property_message(std::move(msg)),
+            name(std::move(name)) {};
 
     virtual ~Weapon() = default;
 
     virtual void operator()(LiveObject *);
 
-    virtual void attack(LiveObject *);
+    virtual uint attack(LiveObject *);
 
     friend std::ostream &operator<<(std::ostream &oss, const Weapon &);
 
@@ -36,6 +39,7 @@ public:
     uint durability;
     const uint max_atk;
     const uint max_durability;
+    std::string name;
     LiveObject *owner = nullptr;
 protected:
     std::string property_message;
@@ -44,21 +48,22 @@ protected:
 
 class Weapon2 : public Weapon {
 public:
-    Weapon2() : Weapon(0, 6, "") {};
+    explicit Weapon2(std::string name = "武器2", std::string msg = "") :
+            Weapon(0, 6, std::move(name), std::move(msg)) {};
 
-    Weapon2(uint atk, uint durability) : Weapon(atk, durability, "") {}
+    Weapon2(uint atk, uint durability, std::string name, std::string msg) :
+            Weapon(atk, durability, std::move(name), std::move(msg)) {}
 
-    void attack(LiveObject *) override;
+    uint attack(LiveObject *) override;
 };
 
 
 class Weapon3 : public Weapon {
 public:
-    Weapon3() : Weapon(1, 6, "属性:使用者攻击力永久翻倍") {};
+    explicit Weapon3(std::string name = "武器3", std::string msg = "属性:在攻击时50%攻击力永久翻倍") :
+            Weapon(1, 6, std::move(name), std::move(msg)) {};
 
-    Weapon3(uint atk, uint durability) : Weapon(atk, durability, "属性:使用者攻击力永久翻倍") {};
-
-    void attack(LiveObject *) override;
+    uint attack(LiveObject *) override;
 };
 
 

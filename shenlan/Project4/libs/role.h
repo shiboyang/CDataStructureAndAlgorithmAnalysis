@@ -26,13 +26,21 @@ public:
 
     virtual ~LiveObject();
 
+    void cure();
+
+    void cure(uint blood);
+
+    void cure(double percent);
+
     [[nodiscard]] bool is_dead() const;
 
     [[nodiscard]] std::string state() const;
 
     [[nodiscard]] uint get_atk() const;
 
-    void gan(LiveObject *other) const;
+    uint gan(LiveObject *other);
+
+    virtual void fight(LiveObject *other);
 
     void injure(uint harm);
 
@@ -40,7 +48,7 @@ public:
 
     void wear(Weapon *);
 
-    [[nodiscard]] Weapon *takeoff(Weapon *);
+    void takeoff();
 
     void add_atk(uint atk);
 
@@ -61,17 +69,15 @@ public:
 
     ~Person() override;
 
-    void cure();
-
-    void cure(uint blood);
-
-    void cure(double percent);
-
     void add_exp(uint exp);
 
-    [[nodiscard]] std::string get_exp() const;
+    [[nodiscard]] uint get_exp() const;
+
+    [[nodiscard]] uint get_max_exp() const;
 
     void add_buff(Buff *);
+
+    void upgrade();
 
     void buff();
 
@@ -88,7 +94,6 @@ public:
     Explorer() :
             Person(100, 10, 0, 100, 10, "探险者") {}
 
-//    ~Explorer() override = default;
 };
 
 
@@ -112,6 +117,11 @@ public:
 
     Boss(double addition, const std::string &name) :
             Monster(uint(addition * 40), uint(addition * 15), uint(addition * 40), name) {};
+
+    void fight(LiveObject *other) override;
+
+protected:
+    bool have_cure = false;
 };
 
 #endif //PROJECT4_ROLE_H

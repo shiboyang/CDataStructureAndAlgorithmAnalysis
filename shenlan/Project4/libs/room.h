@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 class Event;
 
@@ -22,12 +23,8 @@ public:
 
     virtual ~BaseRoom();
 
-    void settle(Person *);
-
-    std::string get_name();
-
-protected:
     const std::string name;
+protected:
     std::vector<Event *> event_list;
 };
 
@@ -51,9 +48,9 @@ public:
     explicit BoosRoom(const std::string &name = "领主房间");
 };
 
-class EquipmentRoom : public BaseRoom {
+class WeaponRoom : public BaseRoom {
 public:
-    explicit EquipmentRoom(const std::string &name = "武器房间");
+    explicit WeaponRoom(const std::string &name = "武器房间");
 };
 
 

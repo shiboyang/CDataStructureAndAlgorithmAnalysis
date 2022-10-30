@@ -7,22 +7,23 @@
 #include "utils.h"
 
 
-void Weapon::attack(LiveObject *other) {
+uint Weapon::attack(LiveObject *other) {
 
+    uint harm = 0;
     if (owner == nullptr) {
         std::cout << "没有装备的武器不能发动攻击" << std::endl;
-        return;
+        return harm;
     }
 
     if (durability > 0) {
-        other->injure(owner->get_atk() + atk);
+        harm = owner->get_atk() + atk;
+        other->injure(harm);
         durability--;
     } else {
-        other->injure(owner->get_atk());
+        harm = owner->get_atk();
+        other->injure(harm);
     }
-    if (durability == 0) {
-        print_weapon_message(this);
-    }
+    return harm;
 }
 
 void Weapon::operator()(LiveObject *obj) {
@@ -30,46 +31,49 @@ void Weapon::operator()(LiveObject *obj) {
 }
 
 std::ostream &operator<<(std::ostream &oss, const Weapon &obj) {
-    oss << "武器: 攻击力:" << obj.atk << " 耐久度:" << obj.durability << " " << obj.property_message << "\n";
+    oss << obj.name << ": 攻击力:" << obj.atk << " 耐久度:" << obj.durability;
+    if (!obj.property_message.empty())
+        oss << " " << obj.property_message;
     return oss;
 }
 
 
-void Weapon2::attack(LiveObject *other) {
+uint Weapon2::attack(LiveObject *other) {
+    uint harm = 0;
     if (owner == nullptr) {
         std::cout << "没有装备的武器不能发动攻击" << std::endl;
-        return;
+        return harm;
     }
     if (durability > 0) {
-        other->injure(owner->get_atk() + durability);
+        harm = owner->get_atk() + durability;
+        other->injure(harm);
         durability--;
     } else {
-        other->injure(owner->get_atk());
+        harm = owner->get_atk();
+        other->injure(harm);
     }
-    if (durability == 0) {
-        print_weapon_message(this);
-    }
+    return harm;
 }
 
 
-void Weapon3::attack(LiveObject *other) {
+uint Weapon3::attack(LiveObject *other) {
+    uint harm = 0;
     if (owner == nullptr) {
         std::cout << "没有装备的武器不能发动攻击" << std::endl;
-        return;
+        return harm;
     }
     if (durability > 0) {
-        if (random() % 2 == 0) {
+        if (randint(0, 1) == 0) {
             owner->add_atk(owner->get_atk());
             print_weapon_property_message(property_message, owner);
         }
-
-        other->injure(owner->get_atk() + atk);
+        harm = owner->get_atk() + atk;
+        other->injure(harm);
         durability--;
     } else {
-        other->injure(owner->get_atk());
+        harm = owner->get_atk();
+        other->injure(harm);
     }
-    if (durability == 0) {
-        print_weapon_message(this);
-    }
+    return harm;
 
 }

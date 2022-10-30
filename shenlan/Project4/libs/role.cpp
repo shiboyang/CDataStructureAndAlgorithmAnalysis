@@ -21,12 +21,16 @@ uint LiveObject::get_atk() const {
     return atk;
 }
 
-void LiveObject::gan(LiveObject *other) const {
+uint LiveObject::gan(LiveObject *other) {
+    uint harm = 0;
+    std::ostringstream oss;
     if (weapon != nullptr) {
-        weapon->attack(other);
+        harm = weapon->attack(other);
     } else {
-        other->injure(this->atk);
+        harm = this->atk;
+        other->injure(harm);
     }
+    return harm;
 }
 
 void LiveObject::injure(uint harm) {
@@ -38,38 +42,58 @@ uint LiveObject::get_hp() const {
 }
 
 void LiveObject::wear(Weapon *equipment) {
-
+    this->takeoff();
     weapon = equipment;
     equipment->owner = this;
 }
 
 
-Weapon *LiveObject::takeoff(Weapon *equipment) {
-    auto ret = weapon;
+void LiveObject::takeoff() {
+    std::ostringstream oss;
+    if (weapon != nullptr) {
+        oss << name << "脱下装备：" << weapon->name;
+        print_msg(oss.str());
+    }
+    delete weapon;
     weapon = nullptr;
-    return ret;
 }
 
 void LiveObject::add_atk(uint attack) {
-    if (attack > 0) {
-        this->atk += attack;
-    }
+    this->atk += attack;
 }
 
 LiveObject::~LiveObject() {
     delete weapon;
 }
 
+void LiveObject::fight(LiveObject *other) {
+    std::ostringstream oss;
+    oss << this->name;
+    auto harm = this->gan(other);
+    if (this->weapon != nullptr)
+        oss << "使用" << weapon->name;
+    oss << "攻击" << other->name << ", 造成" << harm << "伤害, " << other->name << other->state();
+    print_msg(oss.str());
+    if (weapon != nullptr && weapon->durability == 0) {
+        oss.clear();
+        oss.str("");
+        oss << this->name << "的" << weapon->name << "(" << weapon->durability << "/" << weapon->max_durability
+            << ")" << "被销毁";
+        this->takeoff();
+        print_msg(oss.str());
+    }
+}
 
-void Person::cure(uint blood) {
+
+void LiveObject::cure(uint blood) {
     this->hp = (this->hp + blood > this->max_hp) ? max_hp : this->hp + blood;
 }
 
-void Person::cure() {
+void LiveObject::cure() {
     this->hp = this->max_hp;
 }
 
-void Person::cure(double percent) {
+void LiveObject::cure(double percent) {
     auto cure_hp = u_int(this->max_hp * percent);
     this->cure(cure_hp);
 }
@@ -86,30 +110,57 @@ Person::~Person() {
 
 
 void Person::buff() {
-    auto buff_prt = buff_list.begin();
-    while (buff_prt != buff_list.end()) {
-        if ((*buff_prt)->expired())
-            buff_prt = buff_list.erase(buff_prt);
-        else {
-            (**buff_prt)(this);
-            ++buff_prt;
+    auto buff_ptr = buff_list.begin();
+
+    while (buff_ptr != buff_list.end()) {
+        (**buff_ptr)(this);
+        ++buff_ptr;
+    }
+    buff_ptr = buff_list.begin();
+    while (buff_ptr != buff_list.end()) {
+        if ((*buff_ptr)->expired()) {
+            std::ostringstream oss;
+            oss << (*buff_ptr)->message << "移除";
+            delete *buff_ptr;
+            buff_ptr = buff_list.erase(buff_ptr);
+            print_msg(oss.str());
         }
+        ++buff_ptr;
     }
 }
+
 
 void Person::add_exp(uint ex) {
     this->exp += ex;
+
+}
+
+uint Person::get_exp() const {
+    return exp;
+}
+
+void Person::upgrade() {
     if (this->exp > max_exp) {
-        print_upgrade_message(this);
         this->exp -= max_exp;
         this->hp = this->max_exp;
+        print_upgrade_message(this);
     }
 }
 
-std::string Person::get_exp() const {
-    std::ostringstream oss;
-    oss << "(" << exp << "/" << max_exp << ")";
-    return std::move(oss.str());
+uint Person::get_max_exp() const {
+    return max_exp;
 }
 
 
+void Boss::fight(LiveObject *other) {
+    if (hp <= 10 && !have_cure) {
+        this->cure(uint(20));
+        this->have_cure = true;
+        print_msg(name + "恢复20血量, " + state());
+    } else {
+        auto atk = randint(1, 5);
+        this->atk += atk;
+        LiveObject::fight(other);
+        this->atk -= atk;
+    }
+}

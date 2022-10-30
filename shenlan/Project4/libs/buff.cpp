@@ -16,14 +16,14 @@ bool Buff::is_good() const {
 void LossHPBuff::operator()(Person *user) {
     if (expire-- > 0) {
         user->injure(2);
-        std::cout << message << ", " << user->state() << std::endl;
+        std::cout << "触发" << message << ", " << user->state() << std::endl;
     }
 }
 
 void CureBuff::operator()(Person *user) {
     if (expire-- > 0) {
         user->cure(hp);
-        std::cout << message << ", " << user->state() << std::endl;
+        std::cout << "触发" << message << ", " << user->state() << std::endl;
     }
 }
 

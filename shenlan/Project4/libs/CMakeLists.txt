@@ -5,4 +5,4 @@ add_library(libs STATIC
         event.cpp
         utils.cpp
         weapon.cpp
-        )
+        game.cpp)

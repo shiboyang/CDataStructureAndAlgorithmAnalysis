@@ -1,6 +1,7 @@
 //
 // Created by shiby on 22-10-21.
 //
+#include <sstream>
 #include "event.h"
 #include "role.h"
 #include "utils.h"
@@ -10,101 +11,82 @@ bool Event::have_completed() {
     return state == completed;
 }
 
+std::string Event::print() {
+    return "";
+}
+
+
 void CureEvent::operator()(Person *user) {
-    print_event(this->event_message, user->state());
     if (hp > 0)
         user->cure(hp);
     else
         user->cure();
+    print_msg(this->print());
 }
 
-CureEvent::CureEvent(uint hp) : hp(hp) {
-    event_message = "恢复探险者" + std::to_string(hp) + "生命";
-}
-
-
-void LossHPEvent::operator()(Person *user) {
-    print_event(event_message, user->state());
-    user->injure(harm);
-}
-
-
-EncounterEvent::EncounterEvent(int num_monster, double addition, bool random_add, bool create_monster) {
-    auto _addition = addition;
-    for (int i = 0; i < num_monster; ++i) {
-        if (random_add) {
-            _addition = (randint(2)) ? addition : addition * -1;
-        }
-        _addition += 1;
-        Monster *monster;
-        if (create_monster)
-            monster = new Monster(_addition, "怪物" + std::to_string(i));
-        else
-            monster = new Boss(_addition, "怪物首领" + std::to_string(i));
-
-        this->monster_list.push_back(monster);
-    }
+std::string CureEvent::print() {
+    std::ostringstream oss;
+    oss << "恢复探险者";
+    if (hp > 0)
+        oss << hp << "生命";
+    else
+        oss << "全部生命";
+    return std::move(oss.str());
 }
 
 
-EncounterEvent::EncounterEvent(int start, int end, double addition, bool random_add, bool create_monster) {
-    auto num_monster = randint(start, end);
-    auto _addition = addition;
-    for (int i = 0; i < num_monster; ++i) {
-        if (random_add) {
-            _addition = (randint(2)) ? addition : addition * -1;
-        }
-        _addition += 1;
-        auto monster = new Monster(_addition, "怪物" + std::to_string(i));
-        this->monster_list.push_back(monster);
-    }
-}
-
-
-EncounterEvent::~EncounterEvent() {
+BattleEvent::~BattleEvent() {
     for (auto x: this->monster_list) delete x;
 }
 
-void EncounterEvent::operator()(Person *user) {
-    std::cout << "战斗开始" << std::endl;
-    uint exp = 0;
+void BattleEvent::operator()(Person *user) {
+    print_msg(this->print());
     auto monster = monster_list.begin();
     while (!user->is_dead() && monster < monster_list.end()) {
-        user->gan(*monster);
-        print_attack_message(user, *monster);
-
+        user->fight(*monster);
         if ((*monster)->is_dead()) {
-            ++exp;
             print_dead_message(*monster);
             ++monster;
         }
 
         for (auto m = monster; m < monster_list.end(); ++m) {
-            (*m)->gan(user);
-            print_attack_message(*m, user);
+            (*m)->fight(user);
+            if (user->is_dead())
+                break;
         }
     }
     if (!user->is_dead()) {
         state = completed;
-        if (exp > 0) {
-            user->add_exp(exp);
-            print_add_experience_message(user, exp);
-        }
-    } else {
-        print_dead_message(user);
     }
 }
 
-void EncounterEvent::add_monster(Monster *monster) {
+void BattleEvent::add_monster(Monster *monster) {
     monster_list.push_back(monster);
+}
+
+std::string BattleEvent::print() {
+    std::ostringstream oss;
+    oss << "遇战: ";
+    for (auto m: monster_list) {
+        oss << m->name << m->state() << " ";
+    }
+    oss << "\n战斗开始";
+    return std::move(oss.str());
 }
 
 
 void ProportionLossHPEvent::operator()(Person *user) {
     auto hp = user->get_hp();
     user->injure(uint(hp * proportion));
-    print_event(event_message, user->state());
+    print_msg(this->print());
 }
+
+std::string ProportionLossHPEvent::print() {
+    std::ostringstream oss;
+    oss << "探险者损失当前百分之" << int(proportion * 100) << "的生命";
+    return std::move(oss.str());
+}
+
 
 void CleanBadBuffEvent::operator()(Person *user) {
     auto buff_ptr = user->buff_list.begin();
@@ -114,7 +96,13 @@ void CleanBadBuffEvent::operator()(Person *user) {
         } else
             ++buff_ptr;
     }
-    print_event(event_message);
+    print_msg(this->print());
+}
+
+std::string CleanBadBuffEvent::print() {
+    std::ostringstream oss;
+    oss << "清除所有负面效果";
+    return std::move(oss.str());
 }
 
 
@@ -132,10 +120,21 @@ void RecoverEvent::operator()(Person *user) {
         user->cure(snapshot->hp - user->get_hp());
     else
         user->injure(user->get_hp() - snapshot->hp);
+    print_msg(this->print() + " " + user->state());
 }
+
+std::string RecoverEvent::print() {
+    std::ostringstream oss;
+    oss << "恢复生命值为进入房间的状态";
+    return std::move(oss.str());
+}
+
 
 void ExperienceEvent::operator()(Person *user) {
     user->add_exp(exp);
+    print_add_experience_message(user, exp);
+    user->upgrade();
+
 }
 
 void WearEquipment::operator()(Person *user) {

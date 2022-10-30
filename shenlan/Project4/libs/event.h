@@ -31,6 +31,8 @@ public:
 
     bool have_completed();
 
+    virtual std::string print();
+
 protected:
     EventState state = pending;
 };
@@ -39,26 +41,16 @@ class CureEvent : public Event {
 public:
     CureEvent() = default;
 
-    explicit CureEvent(uint hp);
+    explicit CureEvent(uint hp) : hp(hp) {};
 
     void operator()(Person *) override;
 
+    std::string print() override;
+
 protected:
-    std::string event_message = "恢复探险者全部生命";
     const uint hp = 0;
 };
 
-
-class LossHPEvent : public Event {
-public:
-    explicit LossHPEvent(uint hp) : harm(hp) {};
-
-    void operator()(Person *) override;
-
-protected:
-    const uint harm;
-    const std::string event_message = "探险者损失" + std::to_string(harm) + "的生命";
-};
 
 class ProportionLossHPEvent : public Event {
 public:
@@ -66,29 +58,27 @@ public:
 
     void operator()(Person *) override;
 
+    std::string print() override;
+
+
 protected:
     const double proportion;
-    const std::string event_message = "探险者损失当前百分之" + std::to_string(proportion) + "的生命";
 };
 
-class EncounterEvent : public Event {
+class BattleEvent : public Event {
 public:
-    EncounterEvent() = default;
+    BattleEvent() = default;
 
-    explicit EncounterEvent(int num_monster, double addition = 0, bool random_add = true, bool create_monster = true);
-
-    EncounterEvent(int start, int end, double addition, bool random_add = true, bool create_monster = true);
-
-    ~EncounterEvent() override;
+    ~BattleEvent() override;
 
     void operator()(Person *) override;
 
     void add_monster(Monster *);
 
-protected:
+    std::string print() override;
 
+protected:
     std::vector<Monster *> monster_list;
-    const std::string event_message = "开始战斗";
 };
 
 
@@ -96,8 +86,9 @@ class CleanBadBuffEvent : public Event {
 public:
     void operator()(Person *) override;
 
+    std::string print() override;
+
 protected:
-    const std::string event_message = "清除所有负面效果";
 };
 
 
@@ -113,9 +104,9 @@ protected:
 
 class SnapshotEvent : public Event {
 public:
-    void operator()(Person *) override;
-
     uint hp = 0;
+
+    void operator()(Person *) override;
 };
 
 class RecoverEvent : public Event {
@@ -123,6 +114,8 @@ public:
     explicit RecoverEvent(SnapshotEvent *snapshot) : snapshot(snapshot) {};
 
     void operator()(Person *) override;
+
+    std::string print() override;
 
 protected:
     SnapshotEvent *snapshot;
